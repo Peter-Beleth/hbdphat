@@ -67,27 +67,34 @@
         }
         .btn-start:hover { background: var(--primary); color: white; transform: scale(1.05) translateY(-3px); }
 
-        /* --- 2. Story Card (Improved) --- */
+        /* --- 2. Story Card (Improved & Bigger Image) --- */
         #story-screen {
-            display: none; flex-direction: column; align-items: center; width: 90%; max-width: 420px;
+            display: none; flex-direction: column; align-items: center; 
+            width: 95%; /* ขยายความกว้างการ์ด */
+            max-width: 450px; /* เพิ่มขนาดสูงสุด */
             opacity: 0; transition: opacity 0.8s;
         }
         .polaroid {
-            background: white; padding: 15px 15px 25px 15px; border-radius: 12px;
+            background: white; 
+            padding: 8px 8px 25px 8px; /* 🔥 ลดขอบขาวรอบๆ รูปให้น้อยลง รูปจะดูใหญ่ขึ้น */
+            border-radius: 12px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: rotate(-2deg);
             width: 100%; margin-bottom: 30px; position: relative;
-            /* Smooth transition for changes */
             transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            opacity: 0; transform: translateY(50px) scale(0.9) rotate(-2deg); /* Initial state before showing */
+            opacity: 0; transform: translateY(50px) scale(0.9) rotate(-2deg);
         }
-        /* Class for showing the card smoothly */
         .polaroid.show { opacity: 1; transform: translateY(0) scale(1) rotate(-2deg); }
 
         .img-container {
-            width: 100%; aspect-ratio: 1/1; background: #f0f0f0; /* Placeholder color */
-            border-radius: 8px; overflow: hidden; border: 1px solid #eee;
+            width: 100%; aspect-ratio: 1/1; background: #f0f0f0;
+            border-radius: 8px; overflow: hidden; 
+            /* border: 1px solid #eee; 🔥 เอาขอบเทาออกเพื่อให้ดูล้นเต็ม */
         }
-        .polaroid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .polaroid img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; /* 🔥 คำสั่งนี้จะขยายรูปให้เต็มกรอบสี่เหลี่ยมเสมอ */
+            display: block; 
+        }
         
         .story-text {
             font-size: 19px; color: #444; text-align: center; margin-top: 20px;
@@ -107,7 +114,7 @@
             background: rgba(255,255,255,0.92); padding: 40px 25px; border-radius: 25px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.5);
-            opacity: 0; transform: scale(0.8); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+            opacity: 0; transform: scale(0.8); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .hbd-title { font-family: 'Dancing Script', cursive; font-size: 56px; color: var(--secondary); margin: 0; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
         .final-msg { font-size: 20px; line-height: 1.8; margin: 30px 0; color: #444; white-space: pre-wrap; font-weight: 600; }
@@ -120,7 +127,7 @@
         .fade-in { opacity: 1 !important; }
         .pop-up { opacity: 1 !important; transform: scale(1) !important; }
         
-        @media (max-height: 750px) { .polaroid { width: 88%; padding-bottom: 30px; } .title-start { font-size: 45px; } }
+        @media (max-height: 750px) { .polaroid { width: 90%; padding-bottom: 30px; } .title-start { font-size: 45px; } }
     </style>
 </head>
 <body>
@@ -168,121 +175,65 @@
         
         let currentIndex = 0;
 
-        // --- Create Background Effects ---
         function createEffects() {
             const heartCont = document.getElementById('hearts-container');
             const bokehCont = document.getElementById('bokeh-bg');
-
-            // Hearts
             for(let i=0; i<12; i++) {
-                const heart = document.createElement('div');
-                heart.innerHTML = i%2==0 ? '❤️' : '💖';
-                heart.className = 'heart-bg';
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDuration = (Math.random() * 5 + 12) + 's';
-                heart.style.animationDelay = (Math.random() * 5) + 's';
-                heartCont.appendChild(heart);
+                const heart = document.createElement('div'); heart.innerHTML = i%2==0 ? '❤️' : '💖'; heart.className = 'heart-bg';
+                heart.style.left = Math.random() * 100 + '%'; heart.style.animationDuration = (Math.random() * 5 + 12) + 's'; heart.style.animationDelay = (Math.random() * 5) + 's'; heartCont.appendChild(heart);
             }
-            // Bokeh
             for(let i=0; i<15; i++) {
-                const bokeh = document.createElement('div');
-                bokeh.className = 'bokeh';
-                bokeh.style.left = Math.random() * 100 + '%';
-                bokeh.style.top = Math.random() * 100 + '%';
-                bokeh.style.setProperty('--x', (Math.random()*200 - 100) + '%');
-                bokeh.style.setProperty('--y', (Math.random()*200 - 100) + '%');
-                bokeh.style.animationDuration = (Math.random() * 10 + 15) + 's';
-                bokeh.style.animationDelay = (Math.random() * 5) + 's';
-                bokeh.style.backgroundColor = i%3==0 ? 'rgba(255, 255, 255, 0.2)' : i%3==1 ? 'rgba(255, 107, 129, 0.15)' : 'rgba(255, 215, 0, 0.1)';
-                bokehCont.appendChild(bokeh);
+                const bokeh = document.createElement('div'); bokeh.className = 'bokeh';
+                bokeh.style.left = Math.random() * 100 + '%'; bokeh.style.top = Math.random() * 100 + '%';
+                bokeh.style.setProperty('--x', (Math.random()*200 - 100) + '%'); bokeh.style.setProperty('--y', (Math.random()*200 - 100) + '%');
+                bokeh.style.animationDuration = (Math.random() * 10 + 15) + 's'; bokeh.style.animationDelay = (Math.random() * 5) + 's';
+                bokeh.style.backgroundColor = i%3==0 ? 'rgba(255, 255, 255, 0.2)' : i%3==1 ? 'rgba(255, 107, 129, 0.15)' : 'rgba(255, 215, 0, 0.1)'; bokehCont.appendChild(bokeh);
             }
         }
         createEffects();
 
-        // Start Story
         function startStory() {
             document.getElementById('intro-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('intro-screen').classList.add('hidden');
-                const storyScreen = document.getElementById('story-screen');
-                storyScreen.style.display = 'flex';
-                setTimeout(() => {
-                    storyScreen.classList.add('fade-in');
-                    updateSlide(true); // true = first load
-                }, 50);
+                const storyScreen = document.getElementById('story-screen'); storyScreen.style.display = 'flex';
+                setTimeout(() => { storyScreen.classList.add('fade-in'); updateSlide(true); }, 50);
             }, 800);
         }
 
-        // Update Slide (Smoother)
         function updateSlide(isFirst = false) {
-            const img = document.getElementById('story-img');
-            const cap = document.getElementById('story-caption');
-            const card = document.getElementById('photo-card');
-            
-            if(!isFirst) {
-                card.classList.remove('show'); // Trigger fade out
-            }
-
+            const img = document.getElementById('story-img'); const cap = document.getElementById('story-caption'); const card = document.getElementById('photo-card');
+            if(!isFirst) { card.classList.remove('show'); }
             setTimeout(() => {
-                img.src = storyData[currentIndex].img;
-                cap.innerText = storyData[currentIndex].text;
-                
-                // Random subtle rotation
+                img.src = storyData[currentIndex].img; cap.innerText = storyData[currentIndex].text;
                 const rotate = Math.random() * 4 - 2; 
                 card.style.transform = `translateY(50px) scale(0.9) rotate(${rotate}deg)`;
-
-                setTimeout(() => {
-                    card.style.transform = `translateY(0) scale(1) rotate(${rotate}deg)`;
-                    card.classList.add('show'); // Trigger fade in smoothly
-                }, 50);
+                setTimeout(() => { card.style.transform = `translateY(0) scale(1) rotate(${rotate}deg)`; card.classList.add('show'); }, 50);
             }, isFirst ? 0 : 400);
         }
 
-        // Next Slide
         function nextSlide() {
-            if (currentIndex < storyData.length - 1) {
-                currentIndex++;
-                updateSlide();
-            } else {
-                showEnding();
-            }
+            if (currentIndex < storyData.length - 1) { currentIndex++; updateSlide(); } else { showEnding(); }
         }
 
-        // Show Ending
         function showEnding() {
             document.getElementById('story-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('story-screen').classList.add('hidden');
-                const endScreen = document.getElementById('end-screen');
-                endScreen.style.display = 'block';
-                const msgEl = document.getElementById('final-msg-text');
-                msgEl.innerHTML = ""; 
-                
-                setTimeout(() => {
-                    endScreen.classList.add('pop-up');
-                    fireConfetti();
-                    typeWriter(finalMessage, msgEl, 40);
-                }, 100);
+                const endScreen = document.getElementById('end-screen'); endScreen.style.display = 'block';
+                const msgEl = document.getElementById('final-msg-text'); msgEl.innerHTML = ""; 
+                setTimeout(() => { endScreen.classList.add('pop-up'); fireConfetti(); typeWriter(finalMessage, msgEl, 40); }, 100);
             }, 800);
         }
 
-        // Typing Effect with Blinking Cursor
         function typeWriter(text, element, speed) {
-            let i = 0;
-            element.innerHTML = '<span class="blinking-cursor">|</span>';
+            let i = 0; element.innerHTML = '<span class="blinking-cursor">|</span>';
             function type() {
-                if (i < text.length) {
-                    element.innerHTML = text.substring(0, i+1) + '<span class="blinking-cursor">|</span>';
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                     element.innerHTML = text; // Remove cursor at end
-                }
-            }
-            type();
+                if (i < text.length) { element.innerHTML = text.substring(0, i+1) + '<span class="blinking-cursor">|</span>'; i++; setTimeout(type, speed); }
+                else { element.innerHTML = text; }
+            } type();
         }
 
-        // Confetti
         function fireConfetti() {
             const duration = 3000; const end = Date.now() + duration;
             (function frame() {
@@ -291,7 +242,6 @@
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
-
         function replay() { location.reload(); }
     </script>
 </body>
