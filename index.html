@@ -6,233 +6,314 @@
     <title>Our Love Story ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Mali:wght@400;700&family=Sriracha&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS Setup --- */
+        /* --- 1. CORE THEME --- */
         :root {
-            --primary: #ff6b81;
-            --secondary: #ff4757;
-            --bg-gradient: linear-gradient(180deg, #ffe6ee 0%, #ffcdd2 100%);
-            --text-color: #4a2c2c;
+            --primary: #ff4757;
+            --secondary: #ff6b81;
+            --accent: #ffd700;
+            --bg-gradient: radial-gradient(circle at center, #fff0f5 0%, #ffcdd2 100%);
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Mali', cursive; overflow: hidden;
-            background: var(--bg-gradient); color: var(--text-color);
+            background: var(--bg-gradient); color: #444;
+            user-select: none; /* ห้ามคลุมดำ */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23ff4757"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') 12 12, auto;
         }
 
-        /* --- Background Effects --- */
-        .bokeh-container { position: absolute; width: 100%; height: 100%; top:0; left:0; overflow: hidden; z-index: 0; pointer-events: none; }
-        .bokeh {
-            position: absolute; border-radius: 50%; animation: moveBokeh 20s infinite linear;
-            background: rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(255, 230, 240, 0.5); filter: blur(5px);
+        /* --- 2. PROGRESS BAR --- */
+        .progress-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: rgba(255,255,255,0.5); z-index: 100;
         }
-        @keyframes moveBokeh {
-            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.6; }
-            100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
-        }
-        .bg-hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .heart-bg {
-            position: absolute; color: rgba(255, 107, 129, 0.3); font-size: 20px;
-            animation: floatUp 15s linear infinite; bottom: -50px;
-        }
-        @keyframes floatUp { 
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; } 100% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
+        .progress-bar {
+            height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease; box-shadow: 0 0 10px var(--primary);
         }
 
-        /* --- Container --- */
-        #app-container {
+        /* --- 3. BACKGROUND EFFECTS --- */
+        .bg-hearts { position: absolute; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .floating-heart {
+            position: absolute; font-size: 20px; opacity: 0.6;
+            animation: floatUp linear infinite; bottom: -50px;
+        }
+        @keyframes floatUp { to { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+
+        /* Cursor Trail Effect */
+        .trail {
+            position: absolute; width: 10px; height: 10px; background: var(--primary);
+            border-radius: 50%; pointer-events: none; z-index: 999;
+            animation: fadeOut 1s forwards;
+        }
+        @keyframes fadeOut { to { transform: translateY(20px) scale(0); opacity: 0; } }
+
+        /* --- 4. MUSIC DISK (Visual) --- */
+        .music-disk {
+            position: absolute; top: 20px; right: 20px; width: 50px; height: 50px;
+            background: #333; border-radius: 50%; border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 50;
+            display: flex; justify-content: center; align-items: center;
+            animation: spin 3s linear infinite; opacity: 0.8;
+        }
+        .music-disk::after { content: ''; width: 15px; height: 15px; background: var(--primary); border-radius: 50%; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- 5. MAIN CONTAINER --- */
+        #app {
             position: relative; z-index: 10; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            perspective: 1000px; /* For 3D Tilt */
         }
 
-        /* --- 1. Intro --- */
-        #intro-screen { text-align: center; transition: opacity 0.8s; width: 100%; }
-        .title-start {
-            font-family: 'Dancing Script', cursive; font-size: 50px; color: var(--secondary);
-            text-shadow: 3px 3px 0px rgba(255,255,255,0.8); margin-bottom: 20px; animation: pulse 2s infinite;
+        /* --- SCREENS --- */
+        .screen {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Bouncy transition */
         }
-        .btn-start {
+        
+        .hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
+        .active { opacity: 1; pointer-events: auto; transform: scale(1); }
+
+        /* Intro */
+        .intro-title {
+            font-family: 'Dancing Script', cursive; font-size: 60px; color: var(--primary);
+            text-shadow: 3px 3px 0 white; margin-bottom: 20px;
+        }
+        .btn-pulse {
             background: white; color: var(--primary); border: 3px solid var(--primary);
-            padding: 12px 40px; border-radius: 50px; font-size: 20px; font-family: 'Sriracha', cursive;
-            cursor: pointer; box-shadow: 0 10px 25px rgba(255, 107, 129, 0.4); transition: all 0.3s;
+            padding: 15px 50px; border-radius: 50px; font-size: 24px; font-weight: bold; font-family: 'Mali';
+            cursor: pointer; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+            animation: pulseBtn 1.5s infinite; transition: transform 0.2s;
         }
-        .btn-start:hover { transform: scale(1.05); }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 71, 87, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
 
-        /* --- 2. Story Card (Flexible Image) --- */
-        #story-screen {
-            display: none; flex-direction: column; align-items: center; 
-            width: 90%; max-width: 420px; height: auto; max-height: 90vh; /* กันทะลุจอ */
-            opacity: 0; transition: opacity 0.8s;
+        /* Story Card (3D Tilt) */
+        .card-container {
+            width: 90%; max-width: 420px; perspective: 1000px;
         }
         .polaroid {
-            background: white; 
-            padding: 10px 10px 20px 10px; /* ขอบขาว */
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-            width: 100%; margin-bottom: 20px; position: relative;
-            display: flex; flex-direction: column; align-items: center;
-            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            opacity: 0; transform: translateY(50px) scale(0.9);
+            background: white; padding: 12px; border-radius: 15px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            transform-style: preserve-3d; transition: transform 0.1s;
         }
-        .polaroid.show { opacity: 1; transform: translateY(0) scale(1); }
-
-        /* 🔥 แก้ไข: ให้รูปโชว์เต็มใบ ไม่ตัด */
-        .img-wrapper {
-            width: 100%;
-            display: flex; justify-content: center; background: #f8f8f8; border-radius: 8px; overflow: hidden;
+        .img-box {
+            width: 100%; background: #f8f8f8; border-radius: 10px; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            /* Allow image to dictate height, but cap it */
+            max-height: 55vh; min-height: 300px;
         }
-        .polaroid img { 
-            width: 100%; height: auto; /* ให้สูงตามสัดส่วนจริง */
-            max-height: 55vh; /* จำกัดความสูงไม่ให้เกินหน้าจอ */
-            object-fit: contain; /* โชว์ครบทุกส่วน */
-            display: block; 
+        .polaroid img {
+            width: 100%; height: auto; object-fit: contain; display: block;
         }
-        
-        .story-text {
-            font-size: 18px; color: #444; text-align: center; margin-top: 15px;
-            min-height: 60px; display: flex; align-items: center; justify-content: center;
-            font-weight: 700; line-height: 1.5; white-space: pre-line; width: 100%;
+        .caption-box {
+            padding: 20px 10px; text-align: center; color: #444; font-size: 18px; font-weight: 600; line-height: 1.6; white-space: pre-line;
         }
         .btn-next {
-            background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none;
-            padding: 12px 40px; border-radius: 50px; font-size: 18px; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); font-family: 'Mali', cursive; transition: transform 0.2s;
-            margin-top: 10px;
+            margin-top: 20px; background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 12px 40px; border-radius: 50px; font-size: 20px;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); font-family: 'Mali';
+            transition: transform 0.2s;
         }
-        .btn-next:active { transform: scale(0.95); }
+        .btn-next:active { transform: scale(0.9); }
 
-        /* --- 3. End Screen --- */
-        #end-screen {
-            display: none; text-align: center; width: 90%; max-width: 450px;
-            background: rgba(255,255,255,0.95); padding: 30px 20px; border-radius: 25px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.5);
-            opacity: 0; transform: scale(0.8); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        /* Ending */
+        .end-box {
+            background: rgba(255,255,255,0.95); padding: 40px; border-radius: 30px;
+            text-align: center; max-width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border: 2px solid white;
         }
-        .hbd-title { font-family: 'Dancing Script', cursive; font-size: 50px; color: var(--secondary); margin: 0; }
-        .final-msg { font-size: 18px; line-height: 1.6; margin: 20px 0; color: #444; white-space: pre-wrap; font-weight: 600; }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .blinking-cursor { color: var(--secondary); animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        .hidden { display: none !important; } .fade-in { opacity: 1 !important; } .pop-up { opacity: 1 !important; transform: scale(1) !important; }
-        
-        @media (max-height: 700px) { .title-start { font-size: 40px; } .polaroid img { max-height: 45vh; } }
+        /* Mobile Adjust */
+        @media (max-width: 600px) { .intro-title { font-size: 45px; } .polaroid { transform: none !important; } /* Disable 3D tilt on mobile for performance */ }
     </style>
 </head>
 <body>
 
-    <div class="bokeh-container" id="bokeh-bg"></div>
-    <div class="bg-hearts" id="hearts-container"></div>
+    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+    
+    <div class="music-disk" title="Music On"></div>
 
-    <div id="app-container">
-        <div id="intro-screen">
-            <div class="title-start">The Story of Us ❤️</div>
-            <div style="font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">📖✨</div>
-            <button class="btn-start" onclick="startStory()">เปิดอ่านบันทึกรักของเรา</button>
+    <div class="bg-hearts" id="bg-hearts"></div>
+
+    <div id="app">
+        
+        <div class="screen active" id="s-intro">
+            <div class="intro-title">The Story of Us ❤️</div>
+            <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite;">📖</div>
+            <button class="btn-pulse" onclick="nextScreen('s-story')">Tap to Open</button>
         </div>
 
-        <div id="story-screen">
-            <div class="polaroid" id="photo-card">
-                <div class="img-wrapper">
-                    <img id="story-img" src="1.png" alt="Memory">
+        <div class="screen hidden" id="s-story">
+            <div class="card-container" id="tilt-card">
+                <div class="polaroid">
+                    <div class="img-box">
+                        <img id="story-img" src="1.png" alt="Memory">
+                    </div>
+                    <div class="caption-box" id="story-text">...</div>
                 </div>
-                <div class="story-text" id="story-caption">...</div>
             </div>
-            <button class="btn-next" onclick="nextSlide()" id="btn-next-text">ไปต่อค่ะ ❤️</button>
+            <button class="btn-next" onclick="nextSlide()">Next ❤️</button>
         </div>
 
-        <div id="end-screen">
-            <h1 class="hbd-title">Happy Birthday! 🎂</h1>
-            <div class="final-msg" id="final-msg-text"></div>
-            <button class="btn-start" onclick="replay()">อ่านอีกรอบ 💕</button>
+        <div class="screen hidden" id="s-end">
+            <div class="end-box">
+                <h1 style="font-family: 'Dancing Script'; font-size: 50px; color: #ff4757; margin: 0;">Happy Birthday! 🎂</h1>
+                <p id="final-msg" style="font-size: 18px; margin: 20px 0; line-height: 1.6;"></p>
+                <button class="btn-pulse" style="font-size: 18px; padding: 10px 30px;" onclick="location.reload()">Replay ↺</button>
+            </div>
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <script>
-        const storyData = [
-            { img: "1.png", text: "จำวันนั้นได้ไหม? วันที่เรานั่งชิลด้วยกัน\nท่ามกลางธรรมชาติ แค่มีเธออยู่ข้างๆ\nโลกของเค้าก็สดใสขึ้นทันตาเลย ☀️" },
-            { img: "2.png", text: "ถึงบางทีจะชอบทำหน้าดุใส่เวลาหิว 🤣\nแต่รู้ไหมว่า... ยิ่งมอง เค้าก็ยิ่งหลงรัก\nขอบคุณที่อยู่ทานข้าวด้วยกันในทุกมื้อนะ 🍲" },
-            { img: "3.png", text: "ในคืนวันลอยกระทง...\nไม่รู้ว่าหนูอธิษฐานขอพรอะไรนะ\nแต่พรของเค้าคือ 'ขอให้เราอยู่ด้วยกันแบบนี้ตลอดไป' 🌕" },
-            { img: "4.png", text: "เห็นเจ้านายนอนสบายใจพุงพลุ้ยแบบนี้ 🐱\nก็เหมือนเวลาที่เค้าได้อยู่กับหนูเลย\nมันคือ Safe Zone ที่อบอุ่นและสบายใจที่สุด" },
-            { img: "5.png", text: "ขอบคุณที่เป็นรอยยิ้ม เป็นความสุข\nและคอยดูแลกันและกันเสมอมานะ\n(รวมถึงดูแลเจ้าแมวอ้วนพวกนี้ด้วย) 💕" },
-            { img: "6.png", text: "สุดท้ายนี้...\nในวันเกิดปีนี้ เค้าขอให้หนูมีความสุขมากๆ\nสุขภาพแข็งแรง อยู่เป็นแม่แมวที่น่ารักของเค้าไปนานๆ นะ!" } 
+        // --- DATA ---
+        const stories = [
+            { img: "1.png", txt: "จำวันนั้นได้ไหม? วันที่เรานั่งชิลด้วยกัน\nท่ามกลางธรรมชาติ แค่มีเธออยู่ข้างๆ\nโลกของเค้าก็สดใสขึ้นทันตาเลย ☀️" },
+            { img: "2.png", txt: "ถึงบางทีจะชอบทำหน้าดุใส่เวลาหิว 🤣\nแต่รู้ไหมว่า... ยิ่งมอง เค้าก็ยิ่งหลงรัก\nขอบคุณที่อยู่ทานข้าวด้วยกันในทุกมื้อนะ 🍲" },
+            { img: "3.png", txt: "ในคืนวันลอยกระทง...\nไม่รู้ว่าหนูอธิษฐานขอพรอะไรนะ\nแต่พรของเค้าคือ 'ขอให้เราอยู่ด้วยกันแบบนี้ตลอดไป' 🌕" },
+            { img: "4.png", txt: "เห็นเจ้านายนอนสบายใจพุงพลุ้ยแบบนี้ 🐱\nก็เหมือนเวลาที่เค้าได้อยู่กับหนูเลย\nมันคือ Safe Zone ที่อบอุ่นและสบายใจที่สุด" },
+            { img: "5.png", txt: "ขอบคุณที่เป็นรอยยิ้ม เป็นความสุข\nและคอยดูแลกันและกันเสมอมานะ\n(รวมถึงดูแลเจ้าแมวอ้วนพวกนี้ด้วย) 💕" },
+            { img: "6.png", txt: "สุดท้ายนี้...\nในวันเกิดปีนี้ เค้าขอให้หนูมีความสุขมากๆ\nสุขภาพแข็งแรง อยู่เป็นแม่แมวที่น่ารักของเค้าไปนานๆ นะ!" }
         ];
-        const finalMessage = "สุขสันต์วันเกิดนะ 'ที่รัก' 🎂\n\nขอบคุณที่เกิดมาให้เค้ารักนะ\nสัญญาว่าจะตั้งใจทำงาน จะดูแลหนู\nและสร้างอนาคตดีๆ ไปด้วยกัน\n\nรักหนูที่สุดในโลกเลย! ❤️✨";
+        const endMsg = "สุขสันต์วันเกิดนะ 'ที่รัก' 🎂\n\nขอบคุณที่เกิดมาให้เค้ารักนะ\nสัญญาว่าจะตั้งใจทำงาน จะดูแลหนู\nและสร้างอนาคตดีๆ ไปด้วยกัน\n\nรักหนูที่สุดในโลกเลย! ❤️✨";
+
+        let curIdx = 0;
+
+        // --- EFFECTS SYSTEM ---
         
-        let currentIndex = 0;
-
-        function createEffects() {
-            const heartCont = document.getElementById('hearts-container');
-            const bokehCont = document.getElementById('bokeh-bg');
-            for(let i=0; i<12; i++) {
-                const heart = document.createElement('div'); heart.innerHTML = i%2==0 ? '❤️' : '💖'; heart.className = 'heart-bg';
-                heart.style.left = Math.random() * 100 + '%'; heart.style.animationDuration = (Math.random() * 5 + 12) + 's'; heart.style.animationDelay = (Math.random() * 5) + 's'; heartCont.appendChild(heart);
-            }
-            for(let i=0; i<15; i++) {
-                const bokeh = document.createElement('div'); bokeh.className = 'bokeh';
-                bokeh.style.width = (Math.random()*10 + 5) + 'vmin'; bokeh.style.height = bokeh.style.width;
-                bokeh.style.left = Math.random() * 100 + '%'; bokeh.style.top = Math.random() * 100 + '%';
-                bokeh.style.setProperty('--x', (Math.random()*200 - 100) + '%'); bokeh.style.setProperty('--y', (Math.random()*200 - 100) + '%');
-                bokeh.style.animationDuration = (Math.random() * 10 + 15) + 's'; bokeh.style.animationDelay = (Math.random() * 5) + 's';
-                bokeh.style.backgroundColor = i%3==0 ? 'rgba(255, 255, 255, 0.2)' : i%3==1 ? 'rgba(255, 107, 129, 0.15)' : 'rgba(255, 215, 0, 0.1)'; bokehCont.appendChild(bokeh);
-            }
+        // 1. Floating Hearts BG
+        const bgContainer = document.getElementById('bg-hearts');
+        function spawnHeart() {
+            const h = document.createElement('div');
+            h.innerText = Math.random() > 0.5 ? '❤️' : '💖';
+            h.className = 'floating-heart';
+            h.style.left = Math.random() * 100 + '%';
+            h.style.animationDuration = (Math.random() * 5 + 10) + 's';
+            h.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            bgContainer.appendChild(h);
+            setTimeout(() => h.remove(), 15000);
         }
-        createEffects();
+        setInterval(spawnHeart, 800);
 
-        function startStory() {
-            document.getElementById('intro-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro-screen').classList.add('hidden');
-                const storyScreen = document.getElementById('story-screen'); storyScreen.style.display = 'flex';
-                setTimeout(() => { storyScreen.classList.add('fade-in'); updateSlide(true); }, 50);
-            }, 800);
+        // 2. Cursor Trail & Click Boom
+        document.addEventListener('mousemove', (e) => {
+            if(Math.random() > 0.8) createTrail(e.clientX, e.clientY);
+        });
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            if(Math.random() > 0.8) createTrail(touch.clientX, touch.clientY);
+        });
+        document.addEventListener('click', (e) => {
+            createBurst(e.clientX, e.clientY);
+        });
+
+        function createTrail(x, y) {
+            const t = document.createElement('div');
+            t.className = 'trail';
+            t.style.left = x + 'px';
+            t.style.top = y + 'px';
+            t.style.background = `hsl(${Math.random()*360}, 70%, 60%)`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 1000);
         }
 
-        function updateSlide(isFirst = false) {
-            const img = document.getElementById('story-img'); const cap = document.getElementById('story-caption'); const card = document.getElementById('photo-card');
-            if(!isFirst) { card.classList.remove('show'); }
+        function createBurst(x, y) {
+            confetti({
+                particleCount: 30, spread: 60, origin: { x: x/window.innerWidth, y: y/window.innerHeight },
+                colors: ['#ff4757', '#ffffff', '#ffd700'], disableForReducedMotion: true, zIndex: 9999
+            });
+        }
+
+        // 3. 3D Tilt Effect (PC Only)
+        const card = document.querySelector('.polaroid');
+        const container = document.getElementById('app');
+        container.addEventListener('mousemove', (e) => {
+            if(window.innerWidth < 768) return; // No tilt on mobile
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // --- LOGIC ---
+
+        function updateProgress() {
+            const percent = ((curIdx + 1) / stories.length) * 100;
+            document.getElementById('p-bar').style.width = percent + '%';
+        }
+
+        function loadSlide() {
+            const img = document.getElementById('story-img');
+            const txt = document.getElementById('story-text');
+            
+            // Effect
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.8) rotate(-5deg)'; // Reset tilt
+            
             setTimeout(() => {
-                img.src = storyData[currentIndex].img; cap.innerText = storyData[currentIndex].text;
-                // Random subtle rotation
-                const rotate = Math.random() * 4 - 2; 
-                card.style.transform = `translateY(50px) scale(0.9) rotate(${rotate}deg)`;
-                setTimeout(() => { card.style.transform = `translateY(0) scale(1) rotate(${rotate}deg)`; card.classList.add('show'); }, 50);
-            }, isFirst ? 0 : 400);
+                img.src = stories[curIdx].img;
+                txt.innerText = stories[curIdx].txt;
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1) rotate(0deg)';
+                updateProgress();
+            }, 300);
+        }
+
+        function nextScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.classList.add('hidden');
+            });
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('active');
+            
+            if(id === 's-story') loadSlide();
         }
 
         function nextSlide() {
-            if (currentIndex < storyData.length - 1) { currentIndex++; updateSlide(); } else { showEnding(); }
+            if(curIdx < stories.length - 1) {
+                curIdx++;
+                loadSlide();
+            } else {
+                nextScreen('s-end');
+                startTyping(endMsg);
+                fireFireworks();
+            }
         }
 
-        function showEnding() {
-            document.getElementById('story-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('story-screen').classList.add('hidden');
-                const endScreen = document.getElementById('end-screen'); endScreen.style.display = 'block';
-                const msgEl = document.getElementById('final-msg-text'); msgEl.innerHTML = ""; 
-                setTimeout(() => { endScreen.classList.add('pop-up'); fireConfetti(); typeWriter(finalMessage, msgEl, 40); }, 100);
-            }, 800);
-        }
-
-        function typeWriter(text, element, speed) {
-            let i = 0; element.innerHTML = '<span class="blinking-cursor">|</span>';
+        function startTyping(txt) {
+            const el = document.getElementById('final-msg');
+            el.innerHTML = "";
+            let i = 0;
             function type() {
-                if (i < text.length) { element.innerHTML = text.substring(0, i+1) + '<span class="blinking-cursor">|</span>'; i++; setTimeout(type, speed); }
-                else { element.innerHTML = text; }
-            } type();
+                if (i < txt.length) {
+                    el.innerHTML += txt.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            setTimeout(type, 500);
         }
 
-        function fireConfetti() {
-            const duration = 3000; const end = Date.now() + duration;
+        function fireFireworks() {
+            const duration = 5000;
+            const end = Date.now() + duration;
             (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ['#ff6b81', '#ff4757', '#ffd700'] });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: ['#ff6b81', '#ff4757', '#ffd700'] });
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.6 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.6 } });
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
-        function replay() { location.reload(); }
+        
+        // Bounce animation css
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        `;
+        document.head.appendChild(style);
+
     </script>
 </body>
 </html>
