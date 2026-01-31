@@ -6,7 +6,7 @@
     <title>Our Love Story ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Mali:wght@400;700&family=Sriracha&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS Setup (ธีมหวานหรูหรา) --- */
+        /* --- CSS Setup --- */
         :root {
             --primary: #ff6b81;
             --secondary: #ff4757;
@@ -20,32 +20,24 @@
             background: var(--bg-gradient); color: var(--text-color);
         }
 
-        /* --- NEW! Bokeh Background Effect --- */
-        .bokeh-container {
-            position: absolute; width: 100%; height: 100%; top:0; left:0; overflow: hidden; z-index: 0; pointer-events: none;
-        }
+        /* --- Background Effects --- */
+        .bokeh-container { position: absolute; width: 100%; height: 100%; top:0; left:0; overflow: hidden; z-index: 0; pointer-events: none; }
         .bokeh {
-            position: absolute; width: 10vmin; height: 10vmin;
-            border-radius: 50%; animation: moveBokeh 20s infinite linear;
-            background: rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(255, 230, 240, 0.5);
-            filter: blur(5px);
+            position: absolute; border-radius: 50%; animation: moveBokeh 20s infinite linear;
+            background: rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(255, 230, 240, 0.5); filter: blur(5px);
         }
         @keyframes moveBokeh {
             0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.6; }
+            50% { opacity: 0.6; }
             100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
         }
-
-        /* --- Original Hearts Background --- */
         .bg-hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .heart-bg {
             position: absolute; color: rgba(255, 107, 129, 0.3); font-size: 20px;
             animation: floatUp 15s linear infinite; bottom: -50px;
         }
         @keyframes floatUp { 
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; } 100% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
         }
 
         /* --- Container --- */
@@ -55,79 +47,77 @@
         }
 
         /* --- 1. Intro --- */
-        #intro-screen { text-align: center; transition: opacity 0.8s; }
+        #intro-screen { text-align: center; transition: opacity 0.8s; width: 100%; }
         .title-start {
-            font-family: 'Dancing Script', cursive; font-size: 55px; color: var(--secondary);
-            text-shadow: 3px 3px 0px rgba(255,255,255,0.8); margin-bottom: 25px; animation: pulse 2s infinite;
+            font-family: 'Dancing Script', cursive; font-size: 50px; color: var(--secondary);
+            text-shadow: 3px 3px 0px rgba(255,255,255,0.8); margin-bottom: 20px; animation: pulse 2s infinite;
         }
         .btn-start {
             background: white; color: var(--primary); border: 3px solid var(--primary);
-            padding: 15px 50px; border-radius: 50px; font-size: 22px; font-family: 'Sriracha', cursive;
+            padding: 12px 40px; border-radius: 50px; font-size: 20px; font-family: 'Sriracha', cursive;
             cursor: pointer; box-shadow: 0 10px 25px rgba(255, 107, 129, 0.4); transition: all 0.3s;
         }
-        .btn-start:hover { background: var(--primary); color: white; transform: scale(1.05) translateY(-3px); }
+        .btn-start:hover { transform: scale(1.05); }
 
-        /* --- 2. Story Card (Improved & Bigger Image) --- */
+        /* --- 2. Story Card (Flexible Image) --- */
         #story-screen {
             display: none; flex-direction: column; align-items: center; 
-            width: 95%; /* ขยายความกว้างการ์ด */
-            max-width: 450px; /* เพิ่มขนาดสูงสุด */
+            width: 90%; max-width: 420px; height: auto; max-height: 90vh; /* กันทะลุจอ */
             opacity: 0; transition: opacity 0.8s;
         }
         .polaroid {
             background: white; 
-            padding: 8px 8px 25px 8px; /* 🔥 ลดขอบขาวรอบๆ รูปให้น้อยลง รูปจะดูใหญ่ขึ้น */
+            padding: 10px 10px 20px 10px; /* ขอบขาว */
             border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: rotate(-2deg);
-            width: 100%; margin-bottom: 30px; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+            width: 100%; margin-bottom: 20px; position: relative;
+            display: flex; flex-direction: column; align-items: center;
             transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            opacity: 0; transform: translateY(50px) scale(0.9) rotate(-2deg);
+            opacity: 0; transform: translateY(50px) scale(0.9);
         }
-        .polaroid.show { opacity: 1; transform: translateY(0) scale(1) rotate(-2deg); }
+        .polaroid.show { opacity: 1; transform: translateY(0) scale(1); }
 
-        .img-container {
-            width: 100%; aspect-ratio: 1/1; background: #f0f0f0;
-            border-radius: 8px; overflow: hidden; 
-            /* border: 1px solid #eee; 🔥 เอาขอบเทาออกเพื่อให้ดูล้นเต็ม */
+        /* 🔥 แก้ไข: ให้รูปโชว์เต็มใบ ไม่ตัด */
+        .img-wrapper {
+            width: 100%;
+            display: flex; justify-content: center; background: #f8f8f8; border-radius: 8px; overflow: hidden;
         }
         .polaroid img { 
-            width: 100%; height: 100%; 
-            object-fit: cover; /* 🔥 คำสั่งนี้จะขยายรูปให้เต็มกรอบสี่เหลี่ยมเสมอ */
+            width: 100%; height: auto; /* ให้สูงตามสัดส่วนจริง */
+            max-height: 55vh; /* จำกัดความสูงไม่ให้เกินหน้าจอ */
+            object-fit: contain; /* โชว์ครบทุกส่วน */
             display: block; 
         }
         
         .story-text {
-            font-size: 19px; color: #444; text-align: center; margin-top: 20px;
-            min-height: 80px; display: flex; align-items: center; justify-content: center;
-            font-weight: 700; line-height: 1.6; white-space: pre-line;
+            font-size: 18px; color: #444; text-align: center; margin-top: 15px;
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; line-height: 1.5; white-space: pre-line; width: 100%;
         }
         .btn-next {
             background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none;
-            padding: 14px 40px; border-radius: 50px; font-size: 18px; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); font-family: 'Mali', cursive; transition: transform 0.2s, box-shadow 0.2s;
+            padding: 12px 40px; border-radius: 50px; font-size: 18px; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); font-family: 'Mali', cursive; transition: transform 0.2s;
+            margin-top: 10px;
         }
-        .btn-next:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3); }
+        .btn-next:active { transform: scale(0.95); }
 
         /* --- 3. End Screen --- */
         #end-screen {
             display: none; text-align: center; width: 90%; max-width: 450px;
-            background: rgba(255,255,255,0.92); padding: 40px 25px; border-radius: 25px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.95); padding: 30px 20px; border-radius: 25px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.5);
             opacity: 0; transform: scale(0.8); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .hbd-title { font-family: 'Dancing Script', cursive; font-size: 56px; color: var(--secondary); margin: 0; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
-        .final-msg { font-size: 20px; line-height: 1.8; margin: 30px 0; color: #444; white-space: pre-wrap; font-weight: 600; }
+        .hbd-title { font-family: 'Dancing Script', cursive; font-size: 50px; color: var(--secondary); margin: 0; }
+        .final-msg { font-size: 18px; line-height: 1.6; margin: 20px 0; color: #444; white-space: pre-wrap; font-weight: 600; }
 
-        /* Animations */
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .blinking-cursor { color: var(--secondary); animation: blink 1s step-end infinite; font-weight: bold;}
+        .blinking-cursor { color: var(--secondary); animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        .hidden { display: none !important; }
-        .fade-in { opacity: 1 !important; }
-        .pop-up { opacity: 1 !important; transform: scale(1) !important; }
+        .hidden { display: none !important; } .fade-in { opacity: 1 !important; } .pop-up { opacity: 1 !important; transform: scale(1) !important; }
         
-        @media (max-height: 750px) { .polaroid { width: 90%; padding-bottom: 30px; } .title-start { font-size: 45px; } }
+        @media (max-height: 700px) { .title-start { font-size: 40px; } .polaroid img { max-height: 45vh; } }
     </style>
 </head>
 <body>
@@ -138,13 +128,13 @@
     <div id="app-container">
         <div id="intro-screen">
             <div class="title-start">The Story of Us ❤️</div>
-            <div style="font-size: 80px; margin-bottom: 30px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">📖✨</div>
+            <div style="font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">📖✨</div>
             <button class="btn-start" onclick="startStory()">เปิดอ่านบันทึกรักของเรา</button>
         </div>
 
         <div id="story-screen">
             <div class="polaroid" id="photo-card">
-                <div class="img-container">
+                <div class="img-wrapper">
                     <img id="story-img" src="1.png" alt="Memory">
                 </div>
                 <div class="story-text" id="story-caption">...</div>
@@ -161,7 +151,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-        // ==================== STORY DATA ====================
         const storyData = [
             { img: "1.png", text: "จำวันนั้นได้ไหม? วันที่เรานั่งชิลด้วยกัน\nท่ามกลางธรรมชาติ แค่มีเธออยู่ข้างๆ\nโลกของเค้าก็สดใสขึ้นทันตาเลย ☀️" },
             { img: "2.png", text: "ถึงบางทีจะชอบทำหน้าดุใส่เวลาหิว 🤣\nแต่รู้ไหมว่า... ยิ่งมอง เค้าก็ยิ่งหลงรัก\nขอบคุณที่อยู่ทานข้าวด้วยกันในทุกมื้อนะ 🍲" },
@@ -171,7 +160,6 @@
             { img: "6.png", text: "สุดท้ายนี้...\nในวันเกิดปีนี้ เค้าขอให้หนูมีความสุขมากๆ\nสุขภาพแข็งแรง อยู่เป็นแม่แมวที่น่ารักของเค้าไปนานๆ นะ!" } 
         ];
         const finalMessage = "สุขสันต์วันเกิดนะ 'ที่รัก' 🎂\n\nขอบคุณที่เกิดมาให้เค้ารักนะ\nสัญญาว่าจะตั้งใจทำงาน จะดูแลหนู\nและสร้างอนาคตดีๆ ไปด้วยกัน\n\nรักหนูที่สุดในโลกเลย! ❤️✨";
-        // ====================================================
         
         let currentIndex = 0;
 
@@ -184,6 +172,7 @@
             }
             for(let i=0; i<15; i++) {
                 const bokeh = document.createElement('div'); bokeh.className = 'bokeh';
+                bokeh.style.width = (Math.random()*10 + 5) + 'vmin'; bokeh.style.height = bokeh.style.width;
                 bokeh.style.left = Math.random() * 100 + '%'; bokeh.style.top = Math.random() * 100 + '%';
                 bokeh.style.setProperty('--x', (Math.random()*200 - 100) + '%'); bokeh.style.setProperty('--y', (Math.random()*200 - 100) + '%');
                 bokeh.style.animationDuration = (Math.random() * 10 + 15) + 's'; bokeh.style.animationDelay = (Math.random() * 5) + 's';
@@ -206,6 +195,7 @@
             if(!isFirst) { card.classList.remove('show'); }
             setTimeout(() => {
                 img.src = storyData[currentIndex].img; cap.innerText = storyData[currentIndex].text;
+                // Random subtle rotation
                 const rotate = Math.random() * 4 - 2; 
                 card.style.transform = `translateY(50px) scale(0.9) rotate(${rotate}deg)`;
                 setTimeout(() => { card.style.transform = `translateY(0) scale(1) rotate(${rotate}deg)`; card.classList.add('show'); }, 50);
