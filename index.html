@@ -3,317 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Love Story ❤️</title>
+    <title>รักนะไอ้ตัวแสบ ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Mali:wght@400;700&family=Sriracha&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. CORE THEME --- */
+        /* --- 1. CORE THEME & SPECTACULAR BG --- */
         :root {
-            --primary: #ff4757;
-            --secondary: #ff6b81;
-            --accent: #ffd700;
-            --bg-gradient: radial-gradient(circle at center, #fff0f5 0%, #ffcdd2 100%);
+            --primary: #ff4757; --secondary: #ff6b81; --accent: #ffd700;
+            --bg-gradient: radial-gradient(circle at center, #fff0f5 0%, #ffcdd2 50%, #ff9a9e 100%);
         }
-
         body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Mali', cursive; overflow: hidden;
-            background: var(--bg-gradient); color: #444;
-            user-select: none; /* ห้ามคลุมดำ */
+            margin: 0; padding: 0; height: 100%; font-family: 'Mali', cursive; overflow: hidden;
+            background: var(--bg-gradient); background-size: 400% 400%; animation: gradientBG 15s ease infinite;
+            color: #444; user-select: none;
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23ff4757"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') 12 12, auto;
         }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* --- 2. PROGRESS BAR --- */
-        .progress-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: rgba(255,255,255,0.5); z-index: 100;
-        }
-        .progress-bar {
-            height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent));
-            transition: width 0.5s ease; box-shadow: 0 0 10px var(--primary);
-        }
+        /* Dynamic Particles */
+        #particles-js { position: absolute; width: 100%; height: 100%; z-index: 0; }
 
-        /* --- 3. BACKGROUND EFFECTS --- */
-        .bg-hearts { position: absolute; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
-        .floating-heart {
-            position: absolute; font-size: 20px; opacity: 0.6;
-            animation: floatUp linear infinite; bottom: -50px;
+        /* --- 2. EFFECTS & UI --- */
+        .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: rgba(255,255,255,0.3); z-index: 100; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary)); transition: width 0.5s ease; box-shadow: 0 0 15px var(--primary); }
+        
+        .music-disk {
+            position: absolute; top: 20px; right: 20px; width: 60px; height: 60px;
+            background: conic-gradient(#333 0%, #555 25%, #333 50%, #555 75%, #333 100%);
+            border-radius: 50%; border: 4px solid white; box-shadow: 0 0 20px rgba(255,71,87,0.5); z-index: 50;
+            display: flex; justify-content: center; align-items: center; animation: spin 2s linear infinite;
         }
-        @keyframes floatUp { to { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+        .music-disk::after { content: '🎵'; font-size: 20px; animation: counterSpin 2s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } } @keyframes counterSpin { 100% { transform: rotate(-360deg); } }
 
-        /* Cursor Trail Effect */
-        .trail {
-            position: absolute; width: 10px; height: 10px; background: var(--primary);
-            border-radius: 50%; pointer-events: none; z-index: 999;
-            animation: fadeOut 1s forwards;
-        }
+        .trail { position: absolute; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; pointer-events: none; z-index: 999; animation: fadeOut 0.8s forwards; box-shadow: 0 0 10px var(--primary); }
         @keyframes fadeOut { to { transform: translateY(20px) scale(0); opacity: 0; } }
 
-        /* --- 4. MUSIC DISK (Visual) --- */
-        .music-disk {
-            position: absolute; top: 20px; right: 20px; width: 50px; height: 50px;
-            background: #333; border-radius: 50%; border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 50;
-            display: flex; justify-content: center; align-items: center;
-            animation: spin 3s linear infinite; opacity: 0.8;
-        }
-        .music-disk::after { content: ''; width: 15px; height: 15px; background: var(--primary); border-radius: 50%; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* --- 5. MAIN CONTAINER --- */
-        #app {
-            position: relative; z-index: 10; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            perspective: 1000px; /* For 3D Tilt */
-        }
-
-        /* --- SCREENS --- */
-        .screen {
-            position: absolute; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Bouncy transition */
-        }
-        
-        .hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
-        .active { opacity: 1; pointer-events: auto; transform: scale(1); }
+        /* --- 3. LAYOUT & SCREENS --- */
+        #app { position: relative; z-index: 10; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; perspective: 1000px; }
+        .screen { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .hidden { opacity: 0; pointer-events: none; transform: scale(1.2); filter: blur(10px); }
+        .active { opacity: 1; pointer-events: auto; transform: scale(1); filter: blur(0); }
 
         /* Intro */
-        .intro-title {
-            font-family: 'Dancing Script', cursive; font-size: 60px; color: var(--primary);
-            text-shadow: 3px 3px 0 white; margin-bottom: 20px;
-        }
+        .intro-title { font-family: 'Dancing Script', cursive; font-size: 70px; color: var(--primary); text-shadow: 4px 4px 0 white, 0 0 20px var(--secondary); margin-bottom: 20px; text-align: center;}
         .btn-pulse {
-            background: white; color: var(--primary); border: 3px solid var(--primary);
-            padding: 15px 50px; border-radius: 50px; font-size: 24px; font-weight: bold; font-family: 'Mali';
-            cursor: pointer; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
-            animation: pulseBtn 1.5s infinite; transition: transform 0.2s;
+            background: white; color: var(--primary); border: 4px solid var(--primary); padding: 18px 60px; border-radius: 50px;
+            font-size: 26px; font-weight: bold; font-family: 'Sriracha'; cursor: pointer;
+            box-shadow: 0 10px 40px rgba(255, 71, 87, 0.6); animation: pulseBtn 1.2s infinite; transition: transform 0.2s;
         }
-        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 71, 87, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.8); } 70% { transform: scale(1.08); box-shadow: 0 0 0 25px rgba(255, 71, 87, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
 
-        /* Story Card (3D Tilt) */
-        .card-container {
-            width: 90%; max-width: 420px; perspective: 1000px;
-        }
+        /* Story Card (Spectacular) */
+        .card-container { width: 90%; max-width: 450px; perspective: 1000px; }
         .polaroid {
-            background: white; padding: 12px; border-radius: 15px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            transform-style: preserve-3d; transition: transform 0.1s;
+            background: white; padding: 15px; border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 30px rgba(255, 71, 87, 0.2);
+            transform-style: preserve-3d; transition: transform 0.1s; position: relative;
+            border: 2px solid rgba(255,255,255,0.8);
         }
-        .img-box {
-            width: 100%; background: #f8f8f8; border-radius: 10px; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-            /* Allow image to dictate height, but cap it */
-            max-height: 55vh; min-height: 300px;
-        }
-        .polaroid img {
-            width: 100%; height: auto; object-fit: contain; display: block;
-        }
-        .caption-box {
-            padding: 20px 10px; text-align: center; color: #444; font-size: 18px; font-weight: 600; line-height: 1.6; white-space: pre-line;
-        }
+        .polaroid::before { content:''; position: absolute; inset: -5px; background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary)); z-index: -1; filter: blur(20px); opacity: 0.4; border-radius: 25px; animation: glow 3s infinite alternate; }
+        @keyframes glow { from { opacity: 0.3; } to { opacity: 0.6; } }
+        .img-box { width: 100%; background: #f8f8f8; border-radius: 15px; overflow: hidden; display: flex; justify-content: center; align-items: center; max-height: 55vh; min-height: 300px; border: 3px solid #fff; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+        .polaroid img { width: 100%; height: auto; object-fit: contain; display: block; }
+        .caption-box { padding: 25px 15px; text-align: center; color: #444; font-size: 20px; font-weight: 700; line-height: 1.6; white-space: pre-line; font-family: 'Sriracha', cursive; }
         .btn-next {
-            margin-top: 20px; background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white; border: none; padding: 12px 40px; border-radius: 50px; font-size: 20px;
-            cursor: pointer; box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); font-family: 'Mali';
-            transition: transform 0.2s;
+            margin-top: 25px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none;
+            padding: 15px 50px; border-radius: 50px; font-size: 22px; cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.6); font-family: 'Sriracha'; transition: all 0.2s;
         }
-        .btn-next:active { transform: scale(0.9); }
+        .btn-next:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255, 71, 87, 0.8); }
+        .btn-next:active { transform: scale(0.95); }
 
         /* Ending */
         .end-box {
-            background: rgba(255,255,255,0.95); padding: 40px; border-radius: 30px;
-            text-align: center; max-width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            border: 2px solid white;
+            background: rgba(255,255,255,0.95); padding: 50px 30px; border-radius: 40px; text-align: center; max-width: 90%;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.3); border: 4px solid white; position: relative; overflow: hidden;
         }
+        .end-box::after { content:''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); transform: rotate(30deg); animation: shine 3s infinite; }
+        @keyframes shine { from { transform: translateX(-100%) rotate(30deg); } to { transform: translateX(100%) rotate(30deg); } }
+
+        /* Screen Shake Animation */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
 
         /* Mobile Adjust */
-        @media (max-width: 600px) { .intro-title { font-size: 45px; } .polaroid { transform: none !important; } /* Disable 3D tilt on mobile for performance */ }
+        @media (max-width: 600px) { .intro-title { font-size: 50px; } .polaroid { transform: none !important; } .caption-box { font-size: 18px; } }
     </style>
 </head>
 <body>
-
     <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
-    
     <div class="music-disk" title="Music On"></div>
-
-    <div class="bg-hearts" id="bg-hearts"></div>
+    <div id="particles-js"></div>
 
     <div id="app">
-        
         <div class="screen active" id="s-intro">
-            <div class="intro-title">The Story of Us ❤️</div>
-            <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite;">📖</div>
-            <button class="btn-pulse" onclick="nextScreen('s-story')">Tap to Open</button>
+            <div class="intro-title">บันทึกรักฉบับกวนตีน ❤️</div>
+            <div style="font-size: 100px; margin-bottom: 30px; animation: bounce 2s infinite; filter: drop-shadow(0 10px 10px rgba(255,71,87,0.4));">📖🌶️</div>
+            <button class="btn-pulse" onclick="nextScreen('s-story')">เปิดแลต๊ะ! (ห้ามบ่น)</button>
         </div>
 
         <div class="screen hidden" id="s-story">
             <div class="card-container" id="tilt-card">
                 <div class="polaroid">
-                    <div class="img-box">
-                        <img id="story-img" src="1.png" alt="Memory">
-                    </div>
+                    <div class="img-box"><img id="story-img" src="1.png" alt="Memory"></div>
                     <div class="caption-box" id="story-text">...</div>
                 </div>
             </div>
-            <button class="btn-next" onclick="nextSlide()">Next ❤️</button>
+            <button class="btn-next" onclick="nextSlide()">ไปต่อเลยนิ ❤️</button>
         </div>
 
         <div class="screen hidden" id="s-end">
             <div class="end-box">
-                <h1 style="font-family: 'Dancing Script'; font-size: 50px; color: #ff4757; margin: 0;">Happy Birthday! 🎂</h1>
-                <p id="final-msg" style="font-size: 18px; margin: 20px 0; line-height: 1.6;"></p>
-                <button class="btn-pulse" style="font-size: 18px; padding: 10px 30px;" onclick="location.reload()">Replay ↺</button>
+                <h1 style="font-family: 'Dancing Script'; font-size: 60px; color: #ff4757; margin: 0; text-shadow: 2px 2px 0 white;">Happy Birthday! 🎂</h1>
+                <p id="final-msg" style="font-family: 'Sriracha'; font-size: 22px; margin: 30px 0; line-height: 1.8; font-weight: bold; color: #333;"></p>
+                <button class="btn-pulse" style="font-size: 20px; padding: 12px 40px;" onclick="location.reload()">แลใหม่อีกที ↺</button>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // --- DATA ---
+        // ==================== CAPTIONS (Nakhon Si Style + กวนตีน + รักนะ) ====================
         const stories = [
-            { img: "1.png", txt: "จำวันนั้นได้ไหม? วันที่เรานั่งชิลด้วยกัน\nท่ามกลางธรรมชาติ แค่มีเธออยู่ข้างๆ\nโลกของเค้าก็สดใสขึ้นทันตาเลย ☀️" },
-            { img: "2.png", txt: "ถึงบางทีจะชอบทำหน้าดุใส่เวลาหิว 🤣\nแต่รู้ไหมว่า... ยิ่งมอง เค้าก็ยิ่งหลงรัก\nขอบคุณที่อยู่ทานข้าวด้วยกันในทุกมื้อนะ 🍲" },
-            { img: "3.png", txt: "ในคืนวันลอยกระทง...\nไม่รู้ว่าหนูอธิษฐานขอพรอะไรนะ\nแต่พรของเค้าคือ 'ขอให้เราอยู่ด้วยกันแบบนี้ตลอดไป' 🌕" },
-            { img: "4.png", txt: "เห็นเจ้านายนอนสบายใจพุงพลุ้ยแบบนี้ 🐱\nก็เหมือนเวลาที่เค้าได้อยู่กับหนูเลย\nมันคือ Safe Zone ที่อบอุ่นและสบายใจที่สุด" },
-            { img: "5.png", txt: "ขอบคุณที่เป็นรอยยิ้ม เป็นความสุข\nและคอยดูแลกันและกันเสมอมานะ\n(รวมถึงดูแลเจ้าแมวอ้วนพวกนี้ด้วย) 💕" },
-            { img: "6.png", txt: "สุดท้ายนี้...\nในวันเกิดปีนี้ เค้าขอให้หนูมีความสุขมากๆ\nสุขภาพแข็งแรง อยู่เป็นแม่แมวที่น่ารักของเค้าไปนานๆ นะ!" }
+            { img: "1.png", txt: "จำได้ม่ายนิ วันที่ไปนั่งแลป่าแลเขากัน 🏞️\nแค่มีเธออยู่ข้างๆ บรรยากาศที่ว่าร้อนๆ...\nกะเย็นสบายขึ้นมาทันทีเลยนิ (หยอกๆ) รักดอกค้าา ❤️" },
+            { img: "2.png", txt: "หวางไปไอ้ไหรไม่รู้นิ หน้างอเหมือนปลาทูแม่กลองตลอดเวลาหิว 🐟\nแต่พอได้กินของหรอยๆ แล้วยิ้มแฉ่งเลยนะ\nน่ารักน่าตีจริงๆ นิค้าา 🤣" },
+            { img: "3.png", txt: "คืนลอยกระทง ไม่รู้อธิษฐานไอ้ไหรตั้งนานสองนาน 🌕\nแต่เค้าอธิษฐานว่า 'ขอให้ยัยตัวแสบคนนี้ อยู่กวนตีนเค้าไปจนแก่เฒ่า' เลยนะค้าา 🙏" },
+            { img: "4.png", txt: "แลต๊ะ นอนพุงปลิ้นเหมือนใครหว่า? 🐱\nเห็นแมวนอนบายใจพันนี้ ก็เหมือนเวลาเค้าอยู่กับเธอแหละ\nมันคือ Safe Zone ที่บายใจที่สุดแล้วนิค้าา 🥰" },
+            { img: "5.png", txt: "ขอบใจนะที่คอยเป็นทั้งความสุข แล้วก็เป็นทั้งความปวดหัวให้เค้าในเวลาเดียวกัน 🤪\nหยอกๆ รักนะหวงนะ ดูแลกันพันนี้ตลอดไปนะค้าา 💕" },
+            { img: "6.png", txt: "สุดท้ายแล้วนิ วันเกิดปีนี้ ขอให้เธอมีความสุขมากๆ 🎉\nอย่าดุให้มันแรงนัก กินน้อยๆ หิดตะเดียวอ้วนแล้ว (หลอกๆ)\nรักเธอที่สุดในโลกเลยนะค้าา 🎂✨" }
         ];
-        const endMsg = "สุขสันต์วันเกิดนะ 'ที่รัก' 🎂\n\nขอบคุณที่เกิดมาให้เค้ารักนะ\nสัญญาว่าจะตั้งใจทำงาน จะดูแลหนู\nและสร้างอนาคตดีๆ ไปด้วยกัน\n\nรักหนูที่สุดในโลกเลย! ❤️✨";
+        const endMsg = "สุขสันต์วันเกิดนะ \"ไอ้ตัวเล็กของเค้า\" 🎂\nแก่ขึ้นอีกปีแล้วนะนิ ขอบคุณที่เกิดมาให้เค้ารักนะ\nสัญญาว่าจะทำงานหาเบี้ยมาเลี้ยงเธอให้พุงแตกไปเลย\nอยู่เป็นกำลังใจให้กันตอใดตอมานะ รักเธอหมดใจเลยนิค้าา ❤️🌶️✨";
+        // ====================================================================================
 
         let curIdx = 0;
 
-        // --- EFFECTS SYSTEM ---
-        
-        // 1. Floating Hearts BG
-        const bgContainer = document.getElementById('bg-hearts');
-        function spawnHeart() {
-            const h = document.createElement('div');
-            h.innerText = Math.random() > 0.5 ? '❤️' : '💖';
-            h.className = 'floating-heart';
-            h.style.left = Math.random() * 100 + '%';
-            h.style.animationDuration = (Math.random() * 5 + 10) + 's';
-            h.style.fontSize = (Math.random() * 20 + 10) + 'px';
-            bgContainer.appendChild(h);
-            setTimeout(() => h.remove(), 15000);
-        }
-        setInterval(spawnHeart, 800);
+        // --- Particles Background ---
+        particlesJS("particles-js", {"particles":{"number":{"value":50,"density":{"enable":true,"value_area":800}},"color":{"value":["#ff4757","#ffd700","#ffffff"]},"shape":{"type":"heart"},"opacity":{"value":0.5,"random":true},"size":{"value":10,"random":true},"line_linked":{"enable":false},"move":{"enable":true,"speed":2,"direction":"top","random":true,"straight":false,"out_mode":"out"}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"bubble"},"onclick":{"enable":true,"mode":"repulse"}},"modes":{"bubble":{"distance":200,"size":15,"duration":2,"opacity":0.8},"repulse":{"distance":200,"duration":0.4}}}});
 
-        // 2. Cursor Trail & Click Boom
-        document.addEventListener('mousemove', (e) => {
-            if(Math.random() > 0.8) createTrail(e.clientX, e.clientY);
-        });
-        document.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            if(Math.random() > 0.8) createTrail(touch.clientX, touch.clientY);
-        });
-        document.addEventListener('click', (e) => {
-            createBurst(e.clientX, e.clientY);
-        });
-
+        // --- Cursor & Click Effects ---
+        document.addEventListener('mousemove', (e) => { if(Math.random()>0.7) createTrail(e.clientX, e.clientY); });
+        document.addEventListener('touchmove', (e) => { if(Math.random()>0.7) createTrail(e.touches[0].clientX, e.touches[0].clientY); });
+        document.addEventListener('click', (e) => { createBurst(e.clientX, e.clientY); });
         function createTrail(x, y) {
-            const t = document.createElement('div');
-            t.className = 'trail';
-            t.style.left = x + 'px';
-            t.style.top = y + 'px';
-            t.style.background = `hsl(${Math.random()*360}, 70%, 60%)`;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 1000);
+            const t = document.createElement('div'); t.className = 'trail'; t.style.left = x+'px'; t.style.top = y+'px';
+            t.style.background = `hsl(${Math.random()*360}, 80%, 60%)`; document.body.appendChild(t); setTimeout(()=>t.remove(),800);
         }
-
         function createBurst(x, y) {
-            confetti({
-                particleCount: 30, spread: 60, origin: { x: x/window.innerWidth, y: y/window.innerHeight },
-                colors: ['#ff4757', '#ffffff', '#ffd700'], disableForReducedMotion: true, zIndex: 9999
-            });
+            confetti({ particleCount: 40, spread: 70, origin: { x: x/window.innerWidth, y: y/window.innerHeight }, colors: ['#ff4757','#ffd700','#ffffff'], zIndex: 9999 });
         }
 
-        // 3. 3D Tilt Effect (PC Only)
-        const card = document.querySelector('.polaroid');
-        const container = document.getElementById('app');
+        // --- 3D Tilt (PC) ---
+        const card = document.querySelector('.polaroid'); const container = document.getElementById('app');
         container.addEventListener('mousemove', (e) => {
-            if(window.innerWidth < 768) return; // No tilt on mobile
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            if(window.innerWidth<768) return;
+            const xAxis = (window.innerWidth/2 - e.pageX)/20; const yAxis = (window.innerHeight/2 - e.pageY)/20;
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
 
-        // --- LOGIC ---
-
-        function updateProgress() {
-            const percent = ((curIdx + 1) / stories.length) * 100;
-            document.getElementById('p-bar').style.width = percent + '%';
-        }
-
+        // --- Logic ---
+        function updateProgress() { document.getElementById('p-bar').style.width = ((curIdx+1)/stories.length)*100 + '%'; }
         function loadSlide() {
-            const img = document.getElementById('story-img');
-            const txt = document.getElementById('story-text');
-            
-            // Effect
-            card.style.opacity = '0';
-            card.style.transform = 'scale(0.8) rotate(-5deg)'; // Reset tilt
-            
-            setTimeout(() => {
-                img.src = stories[curIdx].img;
-                txt.innerText = stories[curIdx].txt;
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1) rotate(0deg)';
-                updateProgress();
-            }, 300);
+            const img = document.getElementById('story-img'); const txt = document.getElementById('story-text');
+            card.style.opacity='0'; card.style.transform='scale(0.8) rotate(-5deg)';
+            setTimeout(()=>{
+                img.src=stories[curIdx].img; txt.innerText=stories[curIdx].txt;
+                card.style.opacity='1'; card.style.transform='scale(1) rotate(0deg)'; updateProgress();
+            },300);
         }
-
         function nextScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => {
-                s.classList.remove('active');
-                s.classList.add('hidden');
-            });
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById(id).classList.add('active');
-            
-            if(id === 's-story') loadSlide();
+            document.getElementById('app').classList.add('shake'); setTimeout(()=>document.getElementById('app').classList.remove('shake'),500); // Shake!
+            document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.classList.add('hidden');});
+            document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('active');
+            if(id==='s-story') loadSlide();
         }
-
         function nextSlide() {
-            if(curIdx < stories.length - 1) {
-                curIdx++;
-                loadSlide();
-            } else {
-                nextScreen('s-end');
-                startTyping(endMsg);
-                fireFireworks();
-            }
+            document.getElementById('app').classList.add('shake'); setTimeout(()=>document.getElementById('app').classList.remove('shake'),500); // Shake!
+            if(curIdx<stories.length-1) { curIdx++; loadSlide(); } else { nextScreen('s-end'); startTyping(endMsg); fireFireworks(); }
         }
-
         function startTyping(txt) {
-            const el = document.getElementById('final-msg');
-            el.innerHTML = "";
-            let i = 0;
-            function type() {
-                if (i < txt.length) {
-                    el.innerHTML += txt.charAt(i);
-                    i++;
-                    setTimeout(type, 50);
-                }
-            }
-            setTimeout(type, 500);
+            const el = document.getElementById('final-msg'); el.innerHTML=""; let i=0;
+            function type() { if(i<txt.length) { el.innerHTML+=txt.charAt(i); i++; setTimeout(type,50); } } setTimeout(type,500);
         }
-
         function fireFireworks() {
-            const duration = 5000;
-            const end = Date.now() + duration;
+            const duration=5000; const end=Date.now()+duration;
             (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.6 } });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.6 } });
-                if (Date.now() < end) requestAnimationFrame(frame);
+                confetti({ particleCount: 10, angle: 60, spread: 80, origin: { x: 0, y: 0.6 }, colors:['#ff4757','#ffd700'] });
+                confetti({ particleCount: 10, angle: 120, spread: 80, origin: { x: 1, y: 0.6 }, colors:['#ff4757','#ffd700'] });
+                if(Date.now()<end) requestAnimationFrame(frame);
             }());
         }
-        
-        // Bounce animation css
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        `;
-        document.head.appendChild(style);
-
+        const style = document.createElement('style'); style.innerHTML = `@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }`; document.head.appendChild(style);
     </script>
 </body>
 </html>
